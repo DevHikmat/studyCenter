@@ -9,13 +9,14 @@ import { login } from "../../services/authService";
 interface LoginForm {
   username: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: LoginForm) => {
     try {
       const { token } = await login(values);
       dispatch(loginSuccess({ token: token, username: values.username }));

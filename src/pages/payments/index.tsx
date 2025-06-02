@@ -25,12 +25,12 @@ export default function PaymentsPage() {
     "August 2023",
   ]
 
-  const changeMonth = (newMonth) => {
+  const changeMonth = (newMonth:string) => {
     setMonth(newMonth)
     // Haqiqiy ilovada yangi oyga oid ma'lumotlarni fetch qilish mumkin
   }
 
-  const updatePaymentStatus = (paymentId, newStatus) => {
+  const updatePaymentStatus = (paymentId:number, newStatus:string) => {
     setPayments(
       payments.map((payment) => {
         if (payment.id === paymentId) {

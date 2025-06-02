@@ -1,0 +1,190 @@
+.attendancePage {
+    padding: 24px;
+  }
+  
+  .pageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .pageTitle {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .statsRow {
+    margin-bottom: 24px;
+  }
+  
+  .tableCard {
+    margin-bottom: 24px;
+  }
+  
+  .tableHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .tableHeader h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+  }
+  
+  .attendanceTable {
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+  }
+  
+  .studentCell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .studentName {
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .studentInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .cardId {
+    font-size: 12px;
+    color: #1890ff;
+    font-weight: 500;
+  }
+  
+  .username {
+    font-size: 12px;
+    color: #8c8c8c;
+  }
+  
+  .dayHeader {
+    text-align: center;
+    line-height: 1.2;
+  }
+  
+  .dayName {
+    font-size: 10px;
+    color: #8c8c8c;
+    font-weight: normal;
+  }
+  
+  .summaryCell {
+    text-align: center;
+  }
+  
+  .attendanceRate {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--primary-color);
+    margin-bottom: 4px;
+  }
+  
+  .attendanceCounts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 11px;
+  }
+  
+  .presentCount {
+    color: #52c41a;
+  }
+  
+  .lateCount {
+    color: #faad14;
+  }
+  
+  .absentCount {
+    color: #ff4d4f;
+  }
+  
+  .studentDetails {
+    padding: 16px 0;
+  }
+  
+  .detailItem {
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+  
+  .detailItem strong {
+    display: inline-block;
+    width: 120px;
+    color: #595959;
+  }
+  
+  .studentAttendanceSummary {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .studentAttendanceSummary h4 {
+    margin-bottom: 16px;
+    color: var(--text-color);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .pageHeader {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+    }
+  
+    .tableHeader {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+  
+    .legend {
+      flex-wrap: wrap;
+    }
+  }
+  
+  /* Custom scrollbar for table */
+  .attendanceTable .ant-table-body {
+    scrollbar-width: thin;
+    scrollbar-color: #d9d9d9 #f0f0f0;
+  }
+  
+  .attendanceTable .ant-table-body::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  
+  .attendanceTable .ant-table-body::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+  
+  .attendanceTable .ant-table-body::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 4px;
+  }
+  
+  .attendanceTable .ant-table-body::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf;
+  }
+  

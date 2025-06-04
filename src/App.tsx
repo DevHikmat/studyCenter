@@ -12,7 +12,6 @@ import { initializeAuth } from "./store/authSlice";
 
 function App() {
   const dispatch = useDispatch();
-
   useEffect(() => {
     dispatch(initializeAuth());
   }, [dispatch]);

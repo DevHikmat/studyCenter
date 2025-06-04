@@ -1,0 +1,16 @@
+export interface Student {
+  id: number;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  gender: "male" | "female";
+  dateOfBirth: string;
+  roleIds?: number[];
+  courseIds?: number[];
+  groupIds?: number[];
+  cardId?: string;
+  status: "active" | "inactive";
+  createdDate: string;
+}

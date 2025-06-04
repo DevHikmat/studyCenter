@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react";
 import {
   Table,
   Button,
@@ -11,177 +11,151 @@ import {
   Card,
   Tag,
   Tooltip,
-} from "antd"
+  message,
+} from "antd";
 import {
   UserAddOutlined,
   EditOutlined,
   DeleteOutlined,
   ExportOutlined,
   SearchOutlined,
-} from "@ant-design/icons"
-import dayjs from "dayjs"
-import styles from "./students.module.css"
+} from "@ant-design/icons";
+import dayjs from "dayjs";
+import styles from "./students.module.css";
+import type { Student } from "../../types";
+import {
+  addStudent,
+  deleteStudent,
+  getAllStudents,
+  updateStudent,
+} from "../../services/studentService";
+import "dayjs/locale/uz";
 
-const { Option } = Select
-const { Search } = Input
+dayjs.locale("uz");
 
-interface Student {
-  id: number
-  username: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  gender: "male" | "female"
-  dateOfBirth: string
-  roleIds?: number[]
-  courseIds?: number[]
-  groupIds?: number[]
-  cardId?: string
-  status: "active" | "inactive"
-}
+const { Option } = Select;
+const { Search } = Input;
 
 const StudentsPage: React.FC = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [editingStudent, setEditingStudent] = useState<Student | null>(null)
-  const [searchText, setSearchText] = useState("")
-  const [form] = Form.useForm()
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<Partial<Student> | null>(
+    null
+  );
+  const [searchText, setSearchText] = useState("");
+  const [form] = Form.useForm();
 
-  const [students, setStudents] = useState<Student[]>([
-    {
-      id: 1,
-      username: "john.doe",
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@school.com",
-      phone: "+1-234-567-8901",
-      gender: "male",
-      dateOfBirth: "2005-03-15",
-      courseIds: [1, 2],
-      groupIds: [1],
-      cardId: "STU001",
-      status: "active",
-    },
-    {
-      id: 2,
-      username: "jane.smith",
-      firstName: "Jane",
-      lastName: "Smith",
-      email: "jane.smith@school.com",
-      phone: "+1-234-567-8902",
-      gender: "female",
-      dateOfBirth: "2005-07-22",
-      courseIds: [1, 3],
-      groupIds: [1],
-      cardId: "STU002",
-      status: "active",
-    },
-    {
-      id: 3,
-      username: "robert.johnson",
-      firstName: "Robert",
-      lastName: "Johnson",
-      email: "robert.johnson@school.com",
-      phone: "+1-234-567-8903",
-      gender: "male",
-      dateOfBirth: "2004-11-08",
-      courseIds: [2, 3],
-      groupIds: [2],
-      cardId: "STU003",
-      status: "inactive",
-    },
-    {
-      id: 4,
-      username: "emily.davis",
-      firstName: "Emily",
-      lastName: "Davis",
-      email: "emily.davis@school.com",
-      phone: "+1-234-567-8904",
-      gender: "female",
-      dateOfBirth: "2005-01-30",
-      courseIds: [1, 2, 3],
-      groupIds: [1],
-      cardId: "STU004",
-      status: "active",
-    },
-  ])
+  const [students, setStudents] = useState<Partial<Student>[]>([]);
 
-  const handleAddEdit = () => {
+  const handleSaveChanges = async (id: number, student: Partial<Student>) => {
+    try {
+      const data = await updateStudent(id, student);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddStudent = async (student: Partial<Student>) => {
+    try {
+      const data = await addStudent(student);
+      message.success("Student muvoffaqiyatli qo'shildi.")
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+      message.warning("Student qo'shishda xatolik yuz berdi.");
+    }
+  };
+
+  const handleAddEdit = async () => {
     form
       .validateFields()
       .then((values) => {
-        const studentData: Student = {
+        const studentData = {
           ...values,
-          dateOfBirth: values.dateOfBirth.format("YYYY-MM-DD"),
-          id: editingStudent ? editingStudent.id : Date.now(),
-        }
+          gender: values.gender.toUpperCase()
+        };
+        studentData.dateOfBirth = values.dateOfBirth.format("YYYY-MM-DD");
 
-        if (editingStudent) {
-          setStudents((prev) =>
-            prev.map((s) => (s.id === editingStudent.id ? studentData : s)),
-          )
+        if (editingStudent && editingStudent.id) {
+          handleSaveChanges(editingStudent.id, studentData);
         } else {
-          setStudents((prev) => [...prev, studentData])
+          handleAddStudent(studentData);
         }
-
-        setIsModalVisible(false)
-        setEditingStudent(null)
-        form.resetFields()
+        // setIsModalVisible(false);
+        setEditingStudent(null);
+        // form.resetFields();
       })
       .catch((info) => {
-        // Validation failed, do nothing
-        console.log("Validate Failed:", info)
-      })
-  }
+        console.log("Validate Failed:", info);
+      });
+  };
 
-  const handleEdit = (student: Student) => {
-    setEditingStudent(student)
+  const handleEdit = (student: Partial<Student>) => {
+    setEditingStudent(student);
     form.setFieldsValue({
       ...student,
-      dateOfBirth: dayjs(student.dateOfBirth),
-    })
-    setIsModalVisible(true)
-  }
+    });
+    setIsModalVisible(true);
+  };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: number | undefined) => {
+    if (!id) return message.warning("Bunday id li student topilmadi.");
     Modal.confirm({
-      title: "Are you sure you want to delete this student?",
-      content: "This action cannot be undone.",
-      onOk: () => {
-        setStudents((prev) => prev.filter((s) => s.id !== id))
+      title: "Rostdan ham ushbu student o'chsinmi ?",
+      content: "Bu jarayonni ortga qaytarib bo'lmaydi.",
+      okText: "Ha",
+      okType: "danger",
+      cancelText: "Bekor qilish",
+      onOk: async () => {
+        try {
+          await deleteStudent(id);
+          message.success("Student muvoffaqiyatli o'chirildi.");
+        } catch (error) {
+          message.warning("O'chirishda xatolik yuz berdi.");
+          console.log(error);
+        }
       },
-    })
-  }
+    });
+  };
 
   const filteredStudents = students.filter((student) => {
-    const lowerSearch = searchText.toLowerCase()
+    const lowerSearch = searchText.toLowerCase();
     return (
-      student.firstName.toLowerCase().includes(lowerSearch) ||
-      student.lastName.toLowerCase().includes(lowerSearch) ||
-      student.email.toLowerCase().includes(lowerSearch) ||
-      student.username.toLowerCase().includes(lowerSearch)
-    )
-  })
+      student.firstName?.toLowerCase().includes(lowerSearch) ||
+      student.lastName?.toLowerCase().includes(lowerSearch) ||
+      student.email?.toLowerCase().includes(lowerSearch)
+    );
+  });
+
+  const handleGetStudents = async () => {
+    try {
+      const data = await getAllStudents();
+      setStudents(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetStudents();
+  }, []);
 
   const columns = [
     {
-      title: "Card ID",
-      dataIndex: "cardId",
-      key: "cardId",
-      width: 100,
-      render: (cardId: string) => (cardId ? <Tag color="blue">{cardId}</Tag> : "-"),
+      title: "№",
+      render: (record: Partial<Student>, _: any, index: number) => (
+        <Tag color="blue">{index + 1}</Tag>
+      ),
     },
     {
-      title: "Name",
-      key: "name",
-      render: (_: any, student: Student) => (
-        <div>
-          <div style={{ fontWeight: 500 }}>
-            {student.firstName} {student.lastName}
-          </div>
-          <div style={{ fontSize: 12, color: "#8c8c8c" }}>@{student.username}</div>
-        </div>
-      ),
+      title: "Ism",
+      dataIndex: "firstName",
+      key: "firstname",
+    },
+    {
+      title: "Familya",
+      dataIndex: "lastName",
+      key: "lastname",
     },
     {
       title: "Email",
@@ -189,37 +163,32 @@ const StudentsPage: React.FC = () => {
       key: "email",
     },
     {
-      title: "Phone",
+      title: "Qo'shildi",
+      key: "email",
+      render: (record: Partial<Student>) => {
+        return (
+          <span>
+            {dayjs(record.createdDate?.slice(0, 23)).format("D-MMMM. YYYY")}
+          </span>
+        );
+      },
+    },
+    {
+      title: "Telefon",
       dataIndex: "phone",
       key: "phone",
     },
     {
-      title: "Gender",
-      dataIndex: "gender",
-      key: "gender",
-      render: (gender: string) => gender.charAt(0).toUpperCase() + gender.slice(1),
-    },
-    {
-      title: "Age",
-      dataIndex: "dateOfBirth",
-      key: "age",
-      render: (dateOfBirth: string) => dayjs().diff(dayjs(dateOfBirth), "year"),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string) => (
-        <Tag color={status === "active" ? "green" : "red"}>{status.toUpperCase()}</Tag>
-      ),
-    },
-    {
       title: "Actions",
       key: "actions",
-      render: (_: any, student: Student) => (
+      render: (_: any, student: Partial<Student>) => (
         <Space>
           <Tooltip title="Edit">
-            <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(student)} />
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => handleEdit(student)}
+            />
           </Tooltip>
           <Tooltip title="Delete">
             <Button
@@ -232,7 +201,7 @@ const StudentsPage: React.FC = () => {
         </Space>
       ),
     },
-  ]
+  ];
 
   return (
     <div className={styles.studentsPage}>
@@ -244,9 +213,9 @@ const StudentsPage: React.FC = () => {
               type="primary"
               icon={<UserAddOutlined />}
               onClick={() => {
-                setEditingStudent(null)
-                form.resetFields()
-                setIsModalVisible(true)
+                setEditingStudent(null);
+                form.resetFields();
+                setIsModalVisible(true);
               }}
             >
               Add Student
@@ -257,7 +226,7 @@ const StudentsPage: React.FC = () => {
 
         <div className={styles.searchContainer}>
           <Search
-            placeholder="Search students by name, email, or username..."
+            placeholder="Qidirish ism, familya yoki email orqali"
             allowClear
             enterButton={<SearchOutlined />}
             size="large"
@@ -274,7 +243,8 @@ const StudentsPage: React.FC = () => {
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} students`,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} students`,
           }}
         />
       </Card>
@@ -284,9 +254,9 @@ const StudentsPage: React.FC = () => {
         open={isModalVisible}
         onOk={handleAddEdit}
         onCancel={() => {
-          setIsModalVisible(false)
-          setEditingStudent(null)
-          form.resetFields()
+          setIsModalVisible(false);
+          setEditingStudent(null);
+          form.resetFields();
         }}
         width={800}
         okText={editingStudent ? "Update" : "Add"}
@@ -297,7 +267,9 @@ const StudentsPage: React.FC = () => {
           initialValues={{ status: "active", gender: "male" }}
           preserve={false}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}
+          >
             <Form.Item
               name="firstName"
               label="First Name"
@@ -314,17 +286,21 @@ const StudentsPage: React.FC = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item
-              name="username"
-              label="Username"
-              rules={[{ required: true, message: "Please enter username" }]}
-            >
-              <Input />
-            </Form.Item>
+            {!editingStudent && (
+              <Form.Item
+                name="username"
+                label="Username"
+                rules={[{ required: true, message: "Please enter username" }]}
+              >
+                <Input />
+              </Form.Item>
+            )}
 
-            <Form.Item name="cardId" label="Card ID">
-              <Input placeholder="e.g., STU001" />
-            </Form.Item>
+            {!editingStudent && (
+              <Form.Item name="cardId" label="Card ID">
+                <Input placeholder="e.g., STU001" />
+              </Form.Item>
+            )}
 
             <Form.Item
               name="email"
@@ -345,40 +321,48 @@ const StudentsPage: React.FC = () => {
               <Input />
             </Form.Item>
 
-            <Form.Item
-              name="gender"
-              label="Gender"
-              rules={[{ required: true, message: "Please select gender" }]}
-            >
-              <Select>
-                <Option value="male">Male</Option>
-                <Option value="female">Female</Option>
-              </Select>
-            </Form.Item>
+            {!editingStudent && (
+              <Form.Item
+                name="gender"
+                label="Gender"
+                rules={[{ required: true, message: "Please select gender" }]}
+              >
+                <Select>
+                  <Option value="MALE">Male</Option>
+                  <Option value="FEMALE">Female</Option>
+                </Select>
+              </Form.Item>
+            )}
 
-            <Form.Item
-              name="dateOfBirth"
-              label="Date of Birth"
-              rules={[{ required: true, message: "Please select date of birth" }]}
-            >
-              <DatePicker style={{ width: "100%" }} />
-            </Form.Item>
+            {!editingStudent && (
+              <Form.Item
+                name="dateOfBirth"
+                label="Date of Birth"
+                rules={[
+                  { required: true, message: "Please select date of birth" },
+                ]}
+              >
+                <DatePicker style={{ width: "100%" }} />
+              </Form.Item>
+            )}
 
-            <Form.Item
-              name="status"
-              label="Status"
-              rules={[{ required: true, message: "Please select status" }]}
-            >
-              <Select>
-                <Option value="active">Active</Option>
-                <Option value="inactive">Inactive</Option>
-              </Select>
-            </Form.Item>
+            {!editingStudent && (
+              <Form.Item
+                name="status"
+                label="Status"
+                rules={[{ required: true, message: "Please select status" }]}
+              >
+                <Select>
+                  <Option value="active">Active</Option>
+                  <Option value="inactive">Inactive</Option>
+                </Select>
+              </Form.Item>
+            )}
           </div>
         </Form>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default StudentsPage
+export default StudentsPage;

@@ -1,16 +1,14 @@
 import axios from "axios"
 
-const API_BASE_URL = "https://airedale-enabling-polliwog.ngrok-free.app/api"
+const API_BASE_URL = "http://185.74.5.42:8081/api"
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
-    Accept: "*/*",
-  },
+    'Accept': '*/*',
+    'Content-Type': 'application/json'
+  }
 })
-
-// Tokenni localStorage dan olib har bir so‘rovga qo‘shish
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token")
   if (token) {

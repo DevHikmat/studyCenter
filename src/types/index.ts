@@ -5,7 +5,7 @@ export interface Student {
   lastName: string;
   email: string;
   phone: string;
-  gender: "male" | "female";
+  gender: "MALE" | "FEMALE";
   dateOfBirth: string;
   roleIds?: number[];
   courseIds?: number[];

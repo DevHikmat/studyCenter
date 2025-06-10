@@ -166,16 +166,16 @@ const StudentsPage: React.FC = () => {
       key: "phone",
     },
     {
-      title: "Actions",
+      title: "Harakatlar",
       key: "actions",
       render: (_: any, student: Partial<Student>) => (
         <Space>
-          <Tooltip title="View">
+          <Tooltip title="Ko'rish">
             <Link to={`/students/${student.id}`}>
               <Button type="text" icon={<FileSearchOutlined />} />
             </Link>
           </Tooltip>
-          <Tooltip title="Delete">
+          <Tooltip title="O'chirish">
             <Button
               type="text"
               danger
@@ -192,7 +192,7 @@ const StudentsPage: React.FC = () => {
     <div className={styles.studentsPage}>
       <Card>
         <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Students Management</h1>
+          <h1 className={styles.pageTitle}>Talabalar boshqaruvi</h1>
           <Space>
             <Button
               type="primary"
@@ -203,9 +203,9 @@ const StudentsPage: React.FC = () => {
                 setIsModalVisible(true);
               }}
             >
-              Add Student
+              Talaba qo'shish
             </Button>
-            <Button icon={<ExportOutlined />}>Export to Excel</Button>
+            <Button icon={<ExportOutlined />}>Excelga eksport qilish</Button>
           </Space>
         </div>
 
@@ -235,7 +235,7 @@ const StudentsPage: React.FC = () => {
       </Card>
 
       <Modal
-        title={editingStudent ? "Update Student Info" : "Add New Student"}
+        title={editingStudent ? "Talaba ma'lumotlarini yangilash" : "Yangi talaba qo'shish"}
         open={isModalVisible}
         onOk={handleAddEdit}
         onCancel={() => {
@@ -244,12 +244,12 @@ const StudentsPage: React.FC = () => {
           form.resetFields();
         }}
         width={800}
-        okText={editingStudent ? "Update" : "Add"}
+        okText={editingStudent ? "O'zgartrish" : "Qo'shish"}
       >
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ status: "active", gender: "male" }}
+          initialValues={{ status: "active", gender: "Erkak" }}
           preserve={false}
         >
           <div
@@ -257,38 +257,38 @@ const StudentsPage: React.FC = () => {
           >
             <Form.Item
               name="firstName"
-              label="First Name"
-              rules={[{ required: true, message: "Please enter first name" }]}
+              label="Ism"
+              rules={[{ required: true, message: "Iltimos, ismingizni kiriting" }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="lastName"
-              label="Last Name"
-              rules={[{ required: true, message: "Please enter last name" }]}
+              label="Familya"
+              rules={[{ required: true, message: "Iltimos, familiyani kiriting" }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="username"
-              label="Username"
-              rules={[{ required: true, message: "Please enter username" }]}
+              label="Foydalanuvchi nomi(Username)"
+              rules={[{ required: true, message: "Foydalanuvchi nomini kiriting" }]}
             >
               <Input />
             </Form.Item>
 
-            <Form.Item name="password" label="Password">
-              <Input placeholder="enter password" />
+            <Form.Item name="password" label="Parol">
+              <Input placeholder="Parol kiriting." />
             </Form.Item>
 
             <Form.Item
               name="email"
               label="Email"
               rules={[
-                { required: true, message: "Please enter email" },
-                { type: "email", message: "Please enter valid email" },
+                { required: true, message: "Iltimos email kiriting" },
+                { type: "email", message: "Yaroqli elektron pochta manzilini kiriting" },
               ]}
             >
               <Input />
@@ -296,45 +296,45 @@ const StudentsPage: React.FC = () => {
 
             <Form.Item
               name="phone"
-              label="Phone"
-              rules={[{ required: true, message: "Please enter phone number" }]}
+              label="Telefon"
+              rules={[{ required: true, message: "Iltimos, telefon raqamini kiriting" }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="gender"
-              label="Gender"
-              rules={[{ required: true, message: "Please select gender" }]}
+              label="Jinsni tanlang"
+              rules={[{ required: true, message: "Jinsni tanlang" }]}
             >
               <Select>
-                <Option value="MALE">Male</Option>
-                <Option value="FEMALE">Female</Option>
+                <Option value="MALE">Erkak</Option>
+                <Option value="FEMALE">Ayol</Option>
               </Select>
             </Form.Item>
 
             <Form.Item
               name="dateOfBirth"
-              label="Date of Birth"
+              label="Tug'ilgan kuni"
               rules={[
-                { required: true, message: "Please select date of birth" },
+                { required: true, message: "Tug'ilgan kuningiz" },
               ]}
             >
               <DatePicker style={{ width: "100%" }} />
             </Form.Item>
 
             <Form.Item name="cardId" label="Card ID">
-              <Input placeholder="e.g., STU001" />
+              <Input placeholder="Card ID" />
             </Form.Item>
 
             <Form.Item
               name="status"
-              label="Status"
-              rules={[{ required: true, message: "Please select status" }]}
+              label="Holati(Status)"
+              rules={[{ required: true, message: "Statusni kiriting" }]}
             >
               <Select>
-                <Option value="active">Active</Option>
-                <Option value="inactive">Inactive</Option>
+                <Option value="active">Faol</Option>
+                <Option value="inactive">Nofaol</Option>
               </Select>
             </Form.Item>
           </div>

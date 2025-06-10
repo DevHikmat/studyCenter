@@ -20,10 +20,10 @@ const { Sider } = Layout;
 
 const menuItems = [
   { key: "/dashboard", label: "Dashboard", icon: <PieChartOutlined /> },
-  { key: "/students", label: "Students", icon: <UserOutlined /> },
-  { key: "/attendance", label: "Attendance", icon: <CalendarOutlined /> },
-  { key: "/payments", label: "Payments", icon: <DollarOutlined /> },
-  { key: "/settings", label: "Settings", icon: <SettingOutlined /> },
+  { key: "/students", label: "Talabalar", icon: <UserOutlined /> },
+  { key: "/attendance", label: "Qatnashish", icon: <CalendarOutlined /> },
+  { key: "/payments", label: "To'lov", icon: <DollarOutlined /> },
+  { key: "/settings", label: "Sozlamalar", icon: <SettingOutlined /> },
 ];
 
 const Sidebar: React.FC = () => {

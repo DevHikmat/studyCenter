@@ -15,6 +15,7 @@ import {
   Input,
   DatePicker,
   Select,
+  Flex,
 } from "antd";
 import {
   EditOutlined,
@@ -118,13 +119,13 @@ const DetailStudentPage: React.FC = () => {
       };
 
       await updateStudent(id, updatedStudent);
-      message.success("Student updated successfully");
+      message.success("Talaba muvoffaqiyatli o'zgartrildi");
       setLoadingEdit(false);
       setIsEditModalOpen(false);
     } catch (error) {
-      message.error("Failed to update student");
+      message.error("Talabani o'zgartrishda xatolik.");
       setLoadingEdit(false);
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -148,11 +149,13 @@ const DetailStudentPage: React.FC = () => {
             />
           </Col>
           <Col flex="auto">
-            <Title level={2} style={{ marginBottom: 4 }}>
+            <Title level={4} style={{ marginBottom: 4 }}>
               {student.firstName} {student.lastName}
             </Title>
             <Text type="secondary" style={{ fontSize: 16 }}>
-              @{student.username}
+              <Flex gap={10}>
+                Foydalanuvchi nomi: <h5>{student.username}</h5>
+              </Flex>
             </Text>
           </Col>
           <Col>
@@ -164,7 +167,7 @@ const DetailStudentPage: React.FC = () => {
                 onClick={openEditModal}
                 shape="round"
               >
-                Edit
+                O'zgartrish
               </Button>
               <Popconfirm
                 title="Studentni o'chirishga ishonchingiz komilmi ?"
@@ -181,7 +184,7 @@ const DetailStudentPage: React.FC = () => {
                   shape="round"
                   loading={loadingDelete}
                 >
-                  Delete
+                  O'chirish
                 </Button>
               </Popconfirm>
             </Space>
@@ -202,7 +205,7 @@ const DetailStudentPage: React.FC = () => {
           <Col span={12}>
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
               <Text strong>
-                <PhoneOutlined /> Phone
+                <PhoneOutlined /> Telefon
               </Text>
               <Text>{student.phone}</Text>
             </Space>
@@ -211,7 +214,7 @@ const DetailStudentPage: React.FC = () => {
           <Col span={12}>
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
               <Text strong>
-                <CalendarOutlined /> Date of Birth
+                <CalendarOutlined /> Tug'ilgan kun
               </Text>
               <Text>{student.dateOfBirth}</Text>
             </Space>
@@ -219,9 +222,9 @@ const DetailStudentPage: React.FC = () => {
           <Col span={12}>
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
               <Text strong>
-                <UserAddOutlined /> Gender
+                <UserAddOutlined /> Jins
               </Text>
-              <Text>{student.gender}</Text>
+              <Text>{student.gender == "MALE" ? "Erkak" : "Ayol"}</Text>
             </Space>
           </Col>
 
@@ -237,7 +240,7 @@ const DetailStudentPage: React.FC = () => {
           <Col span={12}>
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
               <Text strong>
-                <TeamOutlined /> Created By
+                <TeamOutlined /> Ro'yxatga oldi
               </Text>
               <Text>
                 {student.createdBy?.name} (ID: {student.createdBy?.id})
@@ -247,7 +250,7 @@ const DetailStudentPage: React.FC = () => {
         </Row>
       </Card>
       <Modal
-        title="Edit Student"
+        title="Talabani o'zgartrish"
         open={isEditModalOpen}
         onCancel={closeEditModal}
         onOk={() => form.submit()}
@@ -264,34 +267,34 @@ const DetailStudentPage: React.FC = () => {
           }}
         >
           <Form.Item
-            label="First Name"
+            label="Ism"
             name="firstName"
-            rules={[{ required: true, message: "Please input first name" }]}
+            rules={[{ required: true, message: "Iltimos, ismingizni kiriting" }]}
           >
-            <Input placeholder="First Name" />
+            <Input placeholder="Ismingiz" />
           </Form.Item>
 
           <Form.Item
-            label="Last Name"
+            label="Familya"
             name="lastName"
-            rules={[{ required: true, message: "Please input last name" }]}
+            rules={[{ required: true, message: "Iltimos, familiyani kiriting" }]}
           >
-            <Input placeholder="Last Name" />
+            <Input placeholder="Familya" />
           </Form.Item>
 
           <Form.Item
             label="Email"
             name="email"
             rules={[
-              { required: true, message: "Please input email" },
-              { type: "email", message: "Please enter a valid email" },
+              { required: true, message: "Iltimos, elektron pochta manzilini kiriting" },
+              { type: "email", message: "Yaroqli elektron pochta manzilini kiriting" },
             ]}
           >
             <Input placeholder="Email" />
           </Form.Item>
 
           <Form.Item
-            label="Phone"
+            label="Telefon raqami"
             name="phone"
             rules={[
               { required: true, message: "Please input phone number" },
@@ -305,15 +308,15 @@ const DetailStudentPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            label="Date of Birth"
+            label="Tug'ilgan sana"
             name="dateOfBirth"
-            rules={[{ required: true, message: "Please select date of birth" }]}
+            rules={[{ required: true, message: "Iltimos, tug'ilgan sanani tanlang" }]}
           >
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
-            label="Username"
+            label="Foydalanuvchi nomi(Username)"
             name="username"
             rules={[{ required: true, message: "Please input username" }]}
           >
@@ -321,13 +324,13 @@ const DetailStudentPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            label="Gender"
+            label="Jinsingiz"
             name="gender"
-            rules={[{ required: true, message: "Please select gender" }]}
+            rules={[{ required: true, message: "Jinsni tanlang" }]}
           >
-            <Select placeholder="Select Gender">
-              <Option value="MALE">Male</Option>
-              <Option value="FEMALE">Female</Option>
+            <Select placeholder="Jinsni tanlang">
+              <Option value="MALE">Erkak</Option>
+              <Option value="FEMALE">Ayol</Option>
             </Select>
           </Form.Item>
 

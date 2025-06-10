@@ -6,10 +6,10 @@ import type { RootState } from "../../store";
 const Dashboard: React.FC = () => {
   const {studentList: students} = useSelector((state: RootState) => state.students);
   const stats = [
-    { title: "Total Students", value: students?.length, icon: "👨‍🎓" },
-    { title: "Present Today", value: students?.length, icon: "✅" },
-    { title: "Pending Payments", value: "13", icon: "⚠️" },
-    { title: "Total Revenue", value: "$12,450", icon: "💵" },
+    { title: "Jami talabalar", value: students?.length, icon: "👨‍🎓" },
+    { title: "Hozirgi kunda", value: students?.length, icon: "✅" },
+    { title: "Kutilayotgan to'lov", value: "13", icon: "⚠️" },
+    { title: "Jami daromad", value: "$12,450", icon: "💵" },
   ];
 
   return (
@@ -30,13 +30,13 @@ const Dashboard: React.FC = () => {
 
       <div className={styles.dashboardGrid}>
         <div className={styles.gridItem}>
-          <h2 className={styles.sectionTitle}>Recent Students</h2>
+          <h2 className={styles.sectionTitle}>Oxirgi talabalar</h2>
           <div className={styles.recentList}>
             {students.map((student, i) => (
               <div key={i} className={styles.listItem}>
                 <span>{student.firstName} {student.lastName}</span>
                 <span className={styles.listItemDate}>
-                  Joined {i + 1} day{i !== 0 ? "s" : ""} ago
+                  Qo'shildi {i + 1} kun oldin
                 </span>
               </div>
             ))}
@@ -44,10 +44,10 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className={styles.gridItem}>
-          <h2 className={styles.sectionTitle}>Payment Status</h2>
+          <h2 className={styles.sectionTitle}>To'lov holati</h2>
           <div className={styles.paymentStatus}>
             <div className={styles.statusItem}>
-              <div className={styles.statusLabel}>Paid</div>
+              <div className={styles.statusLabel}>To'langan</div>
               <div className={styles.statusBar}>
                 <div
                   className={styles.statusFill}
@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
               <div className={styles.statusValue}>75%</div>
             </div>
             <div className={styles.statusItem}>
-              <div className={styles.statusLabel}>Pending</div>
+              <div className={styles.statusLabel}>Kutilmoqda</div>
               <div className={styles.statusBar}>
                 <div
                   className={styles.statusFill}
@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
               <div className={styles.statusValue}>15%</div>
             </div>
             <div className={styles.statusItem}>
-              <div className={styles.statusLabel}>Overdue</div>
+              <div className={styles.statusLabel}>Muddati o'tgan</div>
               <div className={styles.statusBar}>
                 <div
                   className={styles.statusFill}

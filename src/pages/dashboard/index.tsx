@@ -1,11 +1,14 @@
 import React from "react";
 import styles from "./dashboard.module.css";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 const Dashboard: React.FC = () => {
+  const {studentList: students} = useSelector((state: RootState) => state.students);
   const stats = [
-    { title: "Total Students", value: "256", icon: "👨‍🎓" },
-    { title: "Present Today", value: "230", icon: "✅" },
-    { title: "Pending Payments", value: "15", icon: "⚠️" },
+    { title: "Total Students", value: students?.length, icon: "👨‍🎓" },
+    { title: "Present Today", value: students?.length, icon: "✅" },
+    { title: "Pending Payments", value: "13", icon: "⚠️" },
     { title: "Total Revenue", value: "$12,450", icon: "💵" },
   ];
 
@@ -29,16 +32,14 @@ const Dashboard: React.FC = () => {
         <div className={styles.gridItem}>
           <h2 className={styles.sectionTitle}>Recent Students</h2>
           <div className={styles.recentList}>
-            {["John Doe", "Jane Smith", "Robert Johnson", "Emily Davis", "Michael Brown"].map(
-              (name, i) => (
-                <div key={i} className={styles.listItem}>
-                  <span>{name}</span>
-                  <span className={styles.listItemDate}>
-                    Joined {i + 1} day{i !== 0 ? "s" : ""} ago
-                  </span>
-                </div>
-              )
-            )}
+            {students.map((student, i) => (
+              <div key={i} className={styles.listItem}>
+                <span>{student.firstName} {student.lastName}</span>
+                <span className={styles.listItemDate}>
+                  Joined {i + 1} day{i !== 0 ? "s" : ""} ago
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -48,7 +49,10 @@ const Dashboard: React.FC = () => {
             <div className={styles.statusItem}>
               <div className={styles.statusLabel}>Paid</div>
               <div className={styles.statusBar}>
-                <div className={styles.statusFill} style={{ width: "75%" }}></div>
+                <div
+                  className={styles.statusFill}
+                  style={{ width: "75%" }}
+                ></div>
               </div>
               <div className={styles.statusValue}>75%</div>
             </div>
@@ -57,7 +61,10 @@ const Dashboard: React.FC = () => {
               <div className={styles.statusBar}>
                 <div
                   className={styles.statusFill}
-                  style={{ width: "15%", backgroundColor: "var(--warning-color)" }}
+                  style={{
+                    width: "15%",
+                    backgroundColor: "var(--warning-color)",
+                  }}
                 ></div>
               </div>
               <div className={styles.statusValue}>15%</div>
@@ -67,7 +74,10 @@ const Dashboard: React.FC = () => {
               <div className={styles.statusBar}>
                 <div
                   className={styles.statusFill}
-                  style={{ width: "10%", backgroundColor: "var(--danger-color)" }}
+                  style={{
+                    width: "10%",
+                    backgroundColor: "var(--danger-color)",
+                  }}
                 ></div>
               </div>
               <div className={styles.statusValue}>10%</div>

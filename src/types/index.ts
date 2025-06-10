@@ -13,4 +13,8 @@ export interface Student {
   cardId?: string;
   status: "active" | "inactive";
   createdDate: string;
+  createdBy: {
+    id: string | number;
+    name: string;
+  }
 }

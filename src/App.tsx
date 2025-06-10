@@ -6,12 +6,32 @@ import AttendancePage from "./pages/attendance";
 import PaymentsPage from "./pages/payments";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RootLayout from "./layouts/RootLayout";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { initializeAuth } from "./store/authSlice";
+import type { RootState } from "./store";
+import { getAllStudents } from "./services/studentService";
+import { setStudentToStore } from "./store/studentSlice";
+import StudentDetail from "./pages/studentDetail/StudentDetail";
 
 function App() {
+  const { isChange } = useSelector((state:RootState) => state.students);
   const dispatch = useDispatch();
+
+
+  const handleGetStudents = async () => {
+    try {
+      const data = await getAllStudents();
+      dispatch(setStudentToStore(data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetStudents();
+  }, [isChange]);
+
   useEffect(() => {
     dispatch(initializeAuth());
   }, [dispatch]);
@@ -32,6 +52,7 @@ function App() {
         >
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="students" element={<StudentsPage />} />
+          <Route path="students/:id" element={<StudentDetail />} />
           <Route path="attendance" element={<AttendancePage />} />
           <Route path="payments" element={<PaymentsPage />} />
           <Route index element={<Navigate to="dashboard" />} />

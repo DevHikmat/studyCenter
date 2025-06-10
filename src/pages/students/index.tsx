@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   Button,
@@ -19,6 +19,7 @@ import {
   DeleteOutlined,
   ExportOutlined,
   SearchOutlined,
+  FileSearchOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import styles from "./students.module.css";
@@ -26,10 +27,13 @@ import type { Student } from "../../types";
 import {
   addStudent,
   deleteStudent,
-  getAllStudents,
   updateStudent,
 } from "../../services/studentService";
 import "dayjs/locale/uz";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../store";
+import { studentChanged } from "../../store/studentSlice";
+import { Link } from "react-router-dom";
 
 dayjs.locale("uz");
 
@@ -37,6 +41,10 @@ const { Option } = Select;
 const { Search } = Input;
 
 const StudentsPage: React.FC = () => {
+  const { studentList: students } = useSelector(
+    (state: RootState) => state.students
+  );
+  const dispatch = useDispatch();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Partial<Student> | null>(
     null
@@ -44,12 +52,11 @@ const StudentsPage: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [form] = Form.useForm();
 
-  const [students, setStudents] = useState<Partial<Student>[]>([]);
-
   const handleSaveChanges = async (id: number, student: Partial<Student>) => {
     try {
-      const data = await updateStudent(id, student);
-      console.log(data);
+      await updateStudent(id, student);
+      message.success("Student ma'lumotlari o'zgartrildi.");
+      dispatch(studentChanged());
     } catch (error) {
       console.log(error);
     }
@@ -57,11 +64,12 @@ const StudentsPage: React.FC = () => {
 
   const handleAddStudent = async (student: Partial<Student>) => {
     try {
-      const data = await addStudent(student);
-      message.success("Student muvoffaqiyatli qo'shildi.")
-      console.log(data);
+      await addStudent(student);
+      message.success("Student muvoffaqiyatli qo'shildi.");
+      dispatch(studentChanged());
+      form.resetFields();
+      setIsModalVisible(false);
     } catch (error) {
-      console.log(error);
       message.warning("Student qo'shishda xatolik yuz berdi.");
     }
   };
@@ -72,18 +80,18 @@ const StudentsPage: React.FC = () => {
       .then((values) => {
         const studentData = {
           ...values,
-          gender: values.gender.toUpperCase()
+          gender: values.gender?.toUpperCase(),
         };
-        studentData.dateOfBirth = values.dateOfBirth.format("YYYY-MM-DD");
+        studentData.dateOfBirth = values.dateOfBirth?.format("YYYY-MM-DD");
 
         if (editingStudent && editingStudent.id) {
           handleSaveChanges(editingStudent.id, studentData);
         } else {
           handleAddStudent(studentData);
         }
-        // setIsModalVisible(false);
+        setIsModalVisible(false);
         setEditingStudent(null);
-        // form.resetFields();
+        form.resetFields();
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
@@ -110,6 +118,7 @@ const StudentsPage: React.FC = () => {
         try {
           await deleteStudent(id);
           message.success("Student muvoffaqiyatli o'chirildi.");
+          dispatch(studentChanged());
         } catch (error) {
           message.warning("O'chirishda xatolik yuz berdi.");
           console.log(error);
@@ -126,19 +135,6 @@ const StudentsPage: React.FC = () => {
       student.email?.toLowerCase().includes(lowerSearch)
     );
   });
-
-  const handleGetStudents = async () => {
-    try {
-      const data = await getAllStudents();
-      setStudents(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    handleGetStudents();
-  }, []);
 
   const columns = [
     {
@@ -183,12 +179,10 @@ const StudentsPage: React.FC = () => {
       key: "actions",
       render: (_: any, student: Partial<Student>) => (
         <Space>
-          <Tooltip title="Edit">
-            <Button
-              type="text"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(student)}
-            />
+          <Tooltip title="View">
+            <Link to={`/students/${student.id}`}>
+              <Button type="text" icon={<FileSearchOutlined />} />
+            </Link>
           </Tooltip>
           <Tooltip title="Delete">
             <Button
@@ -250,7 +244,7 @@ const StudentsPage: React.FC = () => {
       </Card>
 
       <Modal
-        title={editingStudent ? "Edit Student" : "Add New Student"}
+        title={editingStudent ? "Update Student Info" : "Add New Student"}
         open={isModalVisible}
         onOk={handleAddEdit}
         onCancel={() => {
@@ -286,21 +280,17 @@ const StudentsPage: React.FC = () => {
               <Input />
             </Form.Item>
 
-            {!editingStudent && (
-              <Form.Item
-                name="username"
-                label="Username"
-                rules={[{ required: true, message: "Please enter username" }]}
-              >
-                <Input />
-              </Form.Item>
-            )}
+            <Form.Item
+              name="username"
+              label="Username"
+              rules={[{ required: true, message: "Please enter username" }]}
+            >
+              <Input />
+            </Form.Item>
 
-            {!editingStudent && (
-              <Form.Item name="cardId" label="Card ID">
-                <Input placeholder="e.g., STU001" />
-              </Form.Item>
-            )}
+            <Form.Item name="password" label="Password">
+              <Input placeholder="enter password" />
+            </Form.Item>
 
             <Form.Item
               name="email"
@@ -321,43 +311,41 @@ const StudentsPage: React.FC = () => {
               <Input />
             </Form.Item>
 
-            {!editingStudent && (
-              <Form.Item
-                name="gender"
-                label="Gender"
-                rules={[{ required: true, message: "Please select gender" }]}
-              >
-                <Select>
-                  <Option value="MALE">Male</Option>
-                  <Option value="FEMALE">Female</Option>
-                </Select>
-              </Form.Item>
-            )}
+            <Form.Item
+              name="gender"
+              label="Gender"
+              rules={[{ required: true, message: "Please select gender" }]}
+            >
+              <Select>
+                <Option value="MALE">Male</Option>
+                <Option value="FEMALE">Female</Option>
+              </Select>
+            </Form.Item>
 
-            {!editingStudent && (
-              <Form.Item
-                name="dateOfBirth"
-                label="Date of Birth"
-                rules={[
-                  { required: true, message: "Please select date of birth" },
-                ]}
-              >
-                <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
-            )}
+            <Form.Item
+              name="dateOfBirth"
+              label="Date of Birth"
+              rules={[
+                { required: true, message: "Please select date of birth" },
+              ]}
+            >
+              <DatePicker style={{ width: "100%" }} />
+            </Form.Item>
 
-            {!editingStudent && (
-              <Form.Item
-                name="status"
-                label="Status"
-                rules={[{ required: true, message: "Please select status" }]}
-              >
-                <Select>
-                  <Option value="active">Active</Option>
-                  <Option value="inactive">Inactive</Option>
-                </Select>
-              </Form.Item>
-            )}
+            <Form.Item name="cardId" label="Card ID">
+              <Input placeholder="e.g., STU001" />
+            </Form.Item>
+
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[{ required: true, message: "Please select status" }]}
+            >
+              <Select>
+                <Option value="active">Active</Option>
+                <Option value="inactive">Inactive</Option>
+              </Select>
+            </Form.Item>
           </div>
         </Form>
       </Modal>

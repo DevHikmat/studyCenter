@@ -15,7 +15,6 @@ import {
 } from "antd";
 import {
   UserAddOutlined,
-  EditOutlined,
   DeleteOutlined,
   ExportOutlined,
   SearchOutlined,
@@ -98,14 +97,6 @@ const StudentsPage: React.FC = () => {
       });
   };
 
-  const handleEdit = (student: Partial<Student>) => {
-    setEditingStudent(student);
-    form.setFieldsValue({
-      ...student,
-    });
-    setIsModalVisible(true);
-  };
-
   const handleDelete = (id: number | undefined) => {
     if (!id) return message.warning("Bunday id li student topilmadi.");
     Modal.confirm({
@@ -139,9 +130,9 @@ const StudentsPage: React.FC = () => {
   const columns = [
     {
       title: "№",
-      render: (record: Partial<Student>, _: any, index: number) => (
+      render: (_: any, __: any, index: number) => (
         <Tag color="blue">{index + 1}</Tag>
-      ),
+      )      
     },
     {
       title: "Ism",

@@ -249,7 +249,7 @@ const StudentsPage: React.FC = () => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ status: "active", gender: "Erkak" }}
+          initialValues={{ status: "active", gender: "MALE" }}
           preserve={false}
         >
           <div

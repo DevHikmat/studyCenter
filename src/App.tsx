@@ -13,6 +13,7 @@ import type { RootState } from "./store";
 import { getAllStudents } from "./services/studentService";
 import { setStudentToStore } from "./store/studentSlice";
 import StudentDetail from "./pages/studentDetail/StudentDetail";
+import Notification from "./components/notification/Notification";
 
 function App() {
   const { isChange } = useSelector((state:RootState) => state.students);
@@ -37,6 +38,7 @@ function App() {
   }, [dispatch]);
   return (
     <BrowserRouter>
+      <Notification />
       <Routes>
         {/* Public route */}
         <Route path="/login" element={<LoginPage />} />
